@@ -1,7 +1,8 @@
 package com.myblog.blog.controller;
 
+import com.myblog.blog.DTO.UserDTO;
+import com.myblog.blog.Services.UserService;
 import com.myblog.blog.model.User;
-import com.myblog.blog.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,47 +11,42 @@ import java.util.List;
 @RequestMapping("api/v1")
 public class UserController {
 
-    private final UserRepository repository;
+    private final UserService userservice;
 
-    public UserController(UserRepository repository) {
-        this.repository = repository;
+    public UserController(UserService userservice) {
+        this.userservice = userservice;
     }
 
     @GetMapping("/all")
-    public List<User> getAll() {
-        return (List<User>) repository.findAll();
+    public List<User> All() {
+        return userservice.getAll();
     }
 
     record Credentials(String email, String password) {};
 
     @PostMapping("/logged")
     public String loggingIn(@RequestBody Credentials cred) {
-        User found = repository.findByEmailAndPassword(cred.email(), cred.password());
-
-        if (found != null)
-            return "Logged in";
-        else
-            return "Wrong email or password";
+        return userservice.login(cred.email(), cred.password());
     }
 
     @PostMapping("/registration")
     public String registration(@RequestBody User user) {
+        return userservice.register(user);
+    }
 
-        if(repository.findByEmail(user.getEmail()) != null) {
-            return "Email already taken";
-        }
-        else if(repository.findByUsername(user.getUsername()) != null) {
-            return "Username already taken";
-        }
-        else {
-            User u = new User();
-            u.setEmail(user.getEmail());
-            u.setPassword(user.getPassword());
-            u.setUsername(user.getUsername());
-            repository.save(u);
-            return "Account successfully created";
-        }
+    @PutMapping("/update")
+    public String update(@RequestBody UserDTO user) {
+        return userservice.updateUser(user);
+    }
 
+    @DeleteMapping("/deleteAll")
+    public void deleteAll() {
+        userservice.deleteAll();
+    }
+
+    @DeleteMapping("/delete")
+    public String delete(@RequestBody Credentials cred) {
+        return userservice.delete(cred.email(), cred.password());
     }
 
 }
