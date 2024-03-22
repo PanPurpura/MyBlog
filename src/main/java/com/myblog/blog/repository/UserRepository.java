@@ -7,16 +7,19 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends CrudRepository<User, Integer> {
 
-    @Query(nativeQuery = true, value = "SELECT * FROM users u WHERE u.email = :email AND u.password = :password")
     public User findByEmailAndPassword(@Param("email") String email, @Param("password") String password);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM users u WHERE u.email = :email")
     public User findByEmail(@Param("email") String email);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM users u WHERE u.username = :username")
     public User findByUsername(@Param("username") String username);
+
+    public List<User> findAllByActive(Boolean active);
+
+    public User findById(long id);
 
 }
