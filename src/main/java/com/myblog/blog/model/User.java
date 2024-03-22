@@ -1,6 +1,5 @@
 package com.myblog.blog.model;
 
-import com.myblog.blog.Services.UserService;
 import jakarta.persistence.*;
 
 import java.util.Objects;

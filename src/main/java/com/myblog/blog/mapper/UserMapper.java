@@ -1,7 +1,6 @@
-package com.myblog.blog.mappers;
+package com.myblog.blog.mapper;
 
-import com.myblog.blog.DTO.UserDTO;
-import com.myblog.blog.DTO.UserPasswordDTO;
+import com.myblog.blog.dto.UserDto;
 import com.myblog.blog.model.User;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -13,5 +12,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 public interface UserMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateUserFromDto(UserDTO dto, @MappingTarget User entity);
+    void updateUserFromDto(UserDto dto, @MappingTarget User entity);
 }

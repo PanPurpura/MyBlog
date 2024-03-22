@@ -1,21 +1,21 @@
-package com.myblog.blog.DTO;
+package com.myblog.blog.dto;
 
 import java.util.Objects;
 
-public class UserDTO {
+public class UserDto {
     private String username;
     private String name;
     private String surname;
     private String email;
 
-    public UserDTO(String username, String name, String surname, String email) {
+    public UserDto(String username, String name, String surname, String email) {
         this.username = username;
         this.name = name;
         this.surname = surname;
         this.email = email;
     }
 
-    public UserDTO() {
+    public UserDto() {
     }
 
     public String getUsername() {
@@ -54,7 +54,7 @@ public class UserDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserDTO userDTO = (UserDTO) o;
+        UserDto userDTO = (UserDto) o;
         return Objects.equals(username, userDTO.username) && Objects.equals(name, userDTO.name) && Objects.equals(surname, userDTO.surname) && Objects.equals(email, userDTO.email);
     }
 

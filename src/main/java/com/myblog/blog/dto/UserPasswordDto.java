@@ -1,16 +1,16 @@
-package com.myblog.blog.DTO;
+package com.myblog.blog.dto;
 
 import java.util.Objects;
 
-public class UserPasswordDTO {
+public class UserPasswordDto {
 
     private String password;
 
-    public UserPasswordDTO(String password) {
+    public UserPasswordDto(String password) {
         this.password = password;
     }
 
-    public UserPasswordDTO() {
+    public UserPasswordDto() {
     }
 
     public String getPassword() {
@@ -25,7 +25,7 @@ public class UserPasswordDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserPasswordDTO that = (UserPasswordDTO) o;
+        UserPasswordDto that = (UserPasswordDto) o;
         return Objects.equals(password, that.password);
     }
 

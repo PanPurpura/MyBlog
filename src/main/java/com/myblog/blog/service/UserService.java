@@ -1,7 +1,7 @@
-package com.myblog.blog.Services;
+package com.myblog.blog.service;
 
-import com.myblog.blog.DTO.UserDTO;
-import com.myblog.blog.mappers.UserMapper;
+import com.myblog.blog.dto.UserDto;
+import com.myblog.blog.mapper.UserMapper;
 import com.myblog.blog.model.User;
 import com.myblog.blog.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -66,7 +66,7 @@ public class UserService {
 
     }
 
-    public String updateUser(UserDTO dto) {
+    public String updateUser(UserDto dto) {
         User myUser = repository.findByEmail(dto.getEmail());
         mapper.updateUserFromDto(dto, myUser);
         repository.save(myUser);

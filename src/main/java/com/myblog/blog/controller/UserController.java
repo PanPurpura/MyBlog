@@ -1,7 +1,7 @@
 package com.myblog.blog.controller;
 
-import com.myblog.blog.DTO.UserDTO;
-import com.myblog.blog.Services.UserService;
+import com.myblog.blog.dto.UserDto;
+import com.myblog.blog.service.UserService;
 import com.myblog.blog.model.User;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +35,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public String update(@RequestBody UserDTO user) {
+    public String update(@RequestBody UserDto user) {
         return userservice.updateUser(user);
     }
 
