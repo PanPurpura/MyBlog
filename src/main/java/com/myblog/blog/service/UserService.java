@@ -1,6 +1,9 @@
 package com.myblog.blog.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.myblog.blog.dto.CredentialsDto;
 import com.myblog.blog.dto.UserDto;
+import com.myblog.blog.mapper.CredentialsMapper;
 import com.myblog.blog.mapper.UserMapper;
 import com.myblog.blog.model.User;
 import com.myblog.blog.repository.UserRepository;
@@ -12,7 +15,9 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository repository;
-    private final UserMapper mapper;
+    private final UserMapper userMapper;
+    private final CredentialsMapper credentialsMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
   /*  public enum roles {
         MODERATOR,
         ADMIN,
@@ -20,9 +25,10 @@ public class UserService {
         VISITATOR
     }*/
 
-    public UserService(UserRepository repository, UserMapper mapper) {
+    public UserService(UserRepository repository, UserMapper userMapper, CredentialsMapper credentialsMapper) {
         this.repository = repository;
-        this.mapper = mapper;
+        this.userMapper = userMapper;
+        this.credentialsMapper = credentialsMapper;
     }
 
     public List<User> getAll() {
@@ -33,8 +39,8 @@ public class UserService {
         return (List<User>) repository.findAllByActive(Boolean.TRUE);
     }
 
-    public String login(String email, String password) {
-        User found = repository.findByEmailAndPassword(email, password);
+    public String login(CredentialsDto dto) {
+        User found = repository.findByEmailAndPassword(dto.getEmail(), dto.getPassword());
 
         if (found != null)
             return "Logged in";
@@ -68,13 +74,13 @@ public class UserService {
 
     public String updateUser(UserDto dto) {
         User myUser = repository.findByEmail(dto.getEmail());
-        mapper.updateUserFromDto(dto, myUser);
+        userMapper.updateUserFromDto(dto, myUser);
         repository.save(myUser);
         return "User data updated";
     }
 
-    public String delete(String email, String password) {
-        User myUser = repository.findByEmailAndPassword(email, password);
+    public String delete(CredentialsDto dto) {
+        User myUser = repository.findByEmailAndPassword(dto.getEmail(), dto.getPassword());
         repository.delete(myUser);
         return "Deleted successfully";
     }
@@ -83,7 +89,11 @@ public class UserService {
         repository.deleteAll();
     }
 
-
-
+    public String updateCredentials(CredentialsDto dto) {
+        User myUser = repository.findByEmail(dto.getEmail());
+        credentialsMapper.updateUserFromCredentialsDto(dto, myUser);
+        repository.save(myUser);
+        return "Credentials Updated";
+    }
 
 }
