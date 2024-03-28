@@ -1,8 +1,10 @@
 package com.myblog.blog.controller;
 
+import com.myblog.blog.dto.CredentialsDto;
 import com.myblog.blog.dto.UserDto;
 import com.myblog.blog.service.UserService;
 import com.myblog.blog.model.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +27,8 @@ public class UserController {
     record Credentials(String email, String password) {};
 
     @PostMapping("/logged")
-    public String loggingIn(@RequestBody Credentials cred) {
-        return userservice.login(cred.email(), cred.password());
+    public String loggingIn(@RequestBody CredentialsDto cred) {
+        return userservice.login(cred);
     }
 
     @PostMapping("/registration")
@@ -45,8 +47,13 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    public String delete(@RequestBody Credentials cred) {
-        return userservice.delete(cred.email(), cred.password());
+    public String delete(@RequestBody CredentialsDto cred) {
+        return userservice.delete(cred);
+    }
+
+    @PutMapping("updateCredentials")
+    public String updateCredentials(@RequestBody CredentialsDto cred) {
+        return userservice.updateCredentials(cred);
     }
 
 }
