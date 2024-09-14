@@ -7,29 +7,18 @@ import com.myblog.blog.mapper.CredentialsMapper;
 import com.myblog.blog.mapper.UserMapper;
 import com.myblog.blog.model.User;
 import com.myblog.blog.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository repository;
     private final UserMapper userMapper;
     private final CredentialsMapper credentialsMapper;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-  /*  public enum roles {
-        MODERATOR,
-        ADMIN,
-        USER,
-        VISITATOR
-    }*/
-
-    public UserService(UserRepository repository, UserMapper userMapper, CredentialsMapper credentialsMapper) {
-        this.repository = repository;
-        this.userMapper = userMapper;
-        this.credentialsMapper = credentialsMapper;
-    }
 
     public List<User> getAll() {
         return (List<User>) repository.findAll();
