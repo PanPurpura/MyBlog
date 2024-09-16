@@ -24,45 +24,8 @@ public class UserService {
         return (List<User>) repository.findAll();
     }
 
-    public List<User> getActive() {
-        return (List<User>) repository.findAllByActive(Boolean.TRUE);
-    }
-
-    public String login(CredentialsDto dto) {
-        User found = repository.findByEmailAndPassword(dto.getEmail(), dto.getPassword());
-
-        if (found != null)
-            return "Logged in";
-        else
-            return "Wrong email or password";
-    }
-
-    public String register(User user) {
-
-        if(repository.findByEmail(user.getEmail()) != null) {
-            return "Email already taken";
-        }
-        else if(repository.findByUsername(user.getUsername()) != null) {
-            return "Username already taken";
-        }
-        else {
-            User u = new User();
-            u.setEmail(user.getEmail());
-            u.setPassword(user.getPassword());
-            u.setUsername(user.getUsername());
-            u.setName(user.getName());
-            u.setSurname(user.getSurname());
-            u.setActive(Boolean.TRUE);
-            u.setLocked(Boolean.FALSE);
-            u.setRole(user.getRole());
-            repository.save(u);
-            return "Account successfully created";
-        }
-
-    }
-
     public String updateUser(UserDto dto) {
-        User myUser = repository.findByEmail(dto.getEmail());
+        User myUser = repository.findByEmail(dto.getEmail()).get();
         userMapper.updateUserFromDto(dto, myUser);
         repository.save(myUser);
         return "User data updated";
@@ -79,7 +42,7 @@ public class UserService {
     }
 
     public String updateCredentials(CredentialsDto dto) {
-        User myUser = repository.findByEmail(dto.getEmail());
+        User myUser = repository.findByEmail(dto.getEmail()).get();
         credentialsMapper.updateUserFromCredentialsDto(dto, myUser);
         repository.save(myUser);
         return "Credentials Updated";
