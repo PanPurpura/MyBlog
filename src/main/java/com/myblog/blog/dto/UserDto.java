@@ -10,9 +10,11 @@ import lombok.Data;
 @AllArgsConstructor
 public class UserDto {
 
-    private String username;
+    private String login;
     private String name;
     private String surname;
     private String email;
+    private String password;
+    private String telephone;
 
 }
