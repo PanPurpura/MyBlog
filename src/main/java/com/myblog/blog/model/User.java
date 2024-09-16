@@ -1,142 +1,71 @@
 package com.myblog.blog.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name="users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false)
-    private String username;
+    @Column(nullable = false, unique = true)
+    private String login;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String  email;
     private String name;
     private String surname;
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean active;
-    @Column(nullable = false)
-    private String role;
+    private Role role;
+    private String telephone;
 
-    @Column(nullable = false)
-    private Boolean locked;
 
-    public User(Integer id, String username, String password, String email, String name, String surname) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.name = name;
-        this.surname = surname;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public User() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
+    @Override
     public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public Boolean getLocked() {
-        return locked;
-    }
-
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email) && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(active, user.active) && Objects.equals(role, user.role) && Objects.equals(locked, user.locked);
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id, username, password, email, name, surname, active, role, locked);
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
     @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", active=" + active +
-                ", role='" + role + '\'' +
-                ", locked=" + locked +
-                '}';
+    public boolean isEnabled() {
+        return true;
     }
 }
 
