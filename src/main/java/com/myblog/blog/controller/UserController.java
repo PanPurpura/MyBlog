@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("api/v1/users")
 public class UserController {
 
     private final UserService userservice;
@@ -25,16 +25,6 @@ public class UserController {
     }
 
     record Credentials(String email, String password) {};
-
-    @PostMapping("/logged")
-    public String loggingIn(@RequestBody CredentialsDto cred) {
-        return userservice.login(cred);
-    }
-
-    @PostMapping("/registration")
-    public String registration(@RequestBody User user) {
-        return userservice.register(user);
-    }
 
     @PutMapping("/update")
     public String update(@RequestBody UserDto user) {
