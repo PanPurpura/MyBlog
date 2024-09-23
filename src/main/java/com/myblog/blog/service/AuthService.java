@@ -45,23 +45,23 @@ public class AuthService {
                 .build();
     }
 
-    public AuthenticationResponseDto register(UserDto userDto) {
+    public AuthenticationResponseDto register(User request) {
 
-        if (repository.findByEmail(userDto.getEmail()).orElse(null) != null) {
+        if (repository.findByEmail(request.getEmail()).orElse(null) != null) {
             return new AuthenticationResponseDto("Email already taken");
         }
-        if (repository.findByLogin(userDto.getLogin()).orElse(null) != null) {
+        if (repository.findByLogin(request.getLogin()).orElse(null) != null) {
             return new AuthenticationResponseDto("Login already taken");
         }
 
             var user = User.builder()
-                    .name(userDto.getName())
-                    .surname(userDto.getSurname())
-                    .email(userDto.getEmail())
-                    .password(passwordEncoder.encode(userDto.getPassword()))
+                    .name(request.getName())
+                    .surname(request.getSurname())
+                    .email(request.getEmail())
+                    .password(passwordEncoder.encode(request.getPassword()))
                     .role(Role.ADMIN)
-                    .telephone(userDto.getTelephone())
-                    .login(userDto.getLogin())
+                    .telephone(request.getTelephone())
+                    .login(request.getLogin())
                     .build();
 
             repository.save(user);
