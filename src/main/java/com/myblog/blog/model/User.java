@@ -37,6 +37,15 @@ public class User implements UserDetails {
     private Role role;
     private String telephone;
 
+    @OneToOne
+    @JoinColumn(name = "profileimage_id")
+    private ProfileImage profImg;
+
+    @OneToMany(mappedBy = "user")
+    private List<BlogPost> blogPostList;
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> commentList;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
