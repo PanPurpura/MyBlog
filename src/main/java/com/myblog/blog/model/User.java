@@ -1,10 +1,13 @@
 package com.myblog.blog.model;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,9 +44,11 @@ public class User implements UserDetails {
     @JoinColumn(name = "profileimage_id")
     private ProfileImage profImg;
 
+    @Fetch(FetchMode.JOIN)
     @OneToMany(mappedBy = "user")
     private List<BlogPost> blogPostList;
 
+    @Fetch(FetchMode.JOIN)
     @OneToMany(mappedBy = "user")
     private List<Comment> commentList;
 
