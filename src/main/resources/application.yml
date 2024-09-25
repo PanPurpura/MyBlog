@@ -3,8 +3,6 @@ server:
 
 spring:
     datasource:
-      hikari:
-        auto-commit: false
       url: jdbc:postgresql://localhost:5332/blog_database
       username: user
       password: password
@@ -32,3 +30,9 @@ spring:
         file-size-threshold: 2KB
         max-file-size: 200MB
         max-request-size: 215MB
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
