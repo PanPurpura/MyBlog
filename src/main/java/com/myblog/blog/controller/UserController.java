@@ -1,5 +1,6 @@
 package com.myblog.blog.controller;
 
+import com.myblog.blog.dto.ChangeEmailDto;
 import com.myblog.blog.dto.ChangePasswordDto;
 import com.myblog.blog.dto.CredentialsDto;
 import com.myblog.blog.dto.UserDto;
@@ -29,7 +30,7 @@ public class UserController {
 
     record Credentials(String email, String password) {};
 
-    @PutMapping("/updateUserInfo")
+    @PutMapping("/update-user-info")
     public User updateUserInfo(@RequestBody UserDto request, Principal connectedUser) {
         return userservice.updateUserInfo(request, connectedUser);
     }
@@ -53,6 +54,11 @@ public class UserController {
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto request, Principal connectedUser) {
         userservice.changePassword(request, connectedUser);
         return ResponseEntity.accepted().build();
+    }
+
+    @PatchMapping("/change-email")
+    public ResponseEntity<?> changeEmail(@RequestBody ChangeEmailDto request, Principal connectedUser) {
+        return ResponseEntity.accepted().body(userservice.changeEmail(request, connectedUser));
     }
 
 }
