@@ -1,8 +1,6 @@
 package com.myblog.blog.service;
 
-import com.myblog.blog.dto.ChangePasswordDto;
-import com.myblog.blog.dto.CredentialsDto;
-import com.myblog.blog.dto.UserDto;
+import com.myblog.blog.dto.*;
 import com.myblog.blog.exception.InvalidPasswordException;
 import com.myblog.blog.mapper.CredentialsMapper;
 import com.myblog.blog.mapper.UserMapper;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +23,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final CredentialsMapper credentialsMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public List<User> getAll() {
         return (List<User>) repository.findAll();
@@ -67,6 +67,31 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         repository.save(user);
+
+    }
+
+    public AuthenticationResponseDto changeEmail(ChangeEmailDto request, Principal connectedUser) {
+
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        if (!passwordEncoder.matches(request.getConfirmPassword(), user.getPassword())) {
+            throw new InvalidPasswordException("Wrong password!");
+        }
+
+        user.setEmail(request.getNewEmail());
+        repository.save(user);
+
+        Map<String, Object> claims = Map.of(
+                "login", user.getLogin(),
+                "name", user.getName(),
+                "surname", user.getSurname(),
+                "telephone", user.getTelephone(),
+                "role", user.getRole()
+        );
+
+        var jwtToken = jwtService.generateToken(claims, user);
+
+        return new AuthenticationResponseDto(jwtToken);
 
     }
 
