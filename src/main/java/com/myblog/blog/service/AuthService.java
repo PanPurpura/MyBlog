@@ -3,6 +3,8 @@ package com.myblog.blog.service;
 import com.myblog.blog.dto.AuthenticationResponseDto;
 import com.myblog.blog.dto.CredentialsDto;
 import com.myblog.blog.dto.UserDto;
+import com.myblog.blog.exception.NotFoundException;
+import com.myblog.blog.exception.UserExistException;
 import com.myblog.blog.model.Role;
 import com.myblog.blog.model.User;
 import com.myblog.blog.repository.UserRepository;
@@ -39,7 +41,15 @@ public class AuthService {
 
         var user = repository.findByEmail(dto.getEmail()).orElse(null);
 
-        var jwtToken = jwtService.generateToken(user);
+        Map<String, Object> claims = Map.of(
+                "login", user.getLogin(),
+                "name", user.getName(),
+                "surname", user.getSurname(),
+                "telephone", user.getTelephone(),
+                "role", user.getRole()
+        );
+
+        var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponseDto.builder()
                 .token(jwtToken)
                 .build();
@@ -48,10 +58,12 @@ public class AuthService {
     public AuthenticationResponseDto register(User request) {
 
         if (repository.findByEmail(request.getEmail()).orElse(null) != null) {
-            return new AuthenticationResponseDto("Email already taken");
+            //return new AuthenticationResponseDto("Email already taken");
+            throw new UserExistException("User already exist");
         }
+
         if (repository.findByLogin(request.getLogin()).orElse(null) != null) {
-            return new AuthenticationResponseDto("Login already taken");
+            throw new UserExistException("User already exist");
         }
 
             var user = User.builder()
