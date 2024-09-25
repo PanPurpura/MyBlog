@@ -8,8 +8,10 @@ import com.myblog.blog.mapper.UserMapper;
 import com.myblog.blog.model.User;
 import com.myblog.blog.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -24,11 +26,11 @@ public class UserService {
         return (List<User>) repository.findAll();
     }
 
-    public String updateUser(UserDto dto) {
-        User myUser = repository.findByEmail(dto.getEmail()).get();
+    public User updateUser(UserDto dto, Principal connectedUser) {
+        var myUser = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         userMapper.updateUserFromDto(dto, myUser);
         repository.save(myUser);
-        return "User data updated";
+        return myUser;
     }
 
     public String delete(CredentialsDto dto) {
