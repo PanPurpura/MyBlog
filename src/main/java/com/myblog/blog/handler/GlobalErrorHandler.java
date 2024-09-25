@@ -1,6 +1,7 @@
 package com.myblog.blog.handler;
 
 import com.myblog.blog.dto.ErrorDto;
+import com.myblog.blog.exception.InvalidPasswordException;
 import com.myblog.blog.exception.NotFoundException;
 import com.myblog.blog.exception.UserExistException;
 import com.myblog.blog.model.User;
@@ -31,6 +32,12 @@ public class GlobalErrorHandler {
     @ExceptionHandler(JwtException.class)
     @ResponseBody
     public ResponseEntity<ErrorDto> handleJwtException(JwtException e) {
+        return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleInvalidPasswordException(InvalidPasswordException e) {
         return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), e.getMessage()));
     }
 
