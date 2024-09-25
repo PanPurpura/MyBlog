@@ -5,8 +5,10 @@ import com.myblog.blog.dto.UserDto;
 import com.myblog.blog.service.UserService;
 import com.myblog.blog.model.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -27,8 +29,8 @@ public class UserController {
     record Credentials(String email, String password) {};
 
     @PutMapping("/update")
-    public String update(@RequestBody UserDto user) {
-        return userservice.updateUser(user);
+    public User update(@RequestBody UserDto request, Principal connectedUser) {
+        return userservice.updateUser(request, connectedUser);
     }
 
     @DeleteMapping("/deleteAll")
@@ -41,7 +43,7 @@ public class UserController {
         return userservice.delete(cred);
     }
 
-    @PutMapping("updateCredentials")
+    @PutMapping("/updateCredentials")
     public String updateCredentials(@RequestBody CredentialsDto cred) {
         return userservice.updateCredentials(cred);
     }
