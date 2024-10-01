@@ -40,7 +40,7 @@ public class User implements UserDetails {
     private Role role;
     private String telephone;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "profileimage_id")
     private ProfileImage profImg;
 
