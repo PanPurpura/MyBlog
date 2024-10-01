@@ -12,18 +12,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="profile_images")
+@Table(name="profile_images", uniqueConstraints = @UniqueConstraint(name = "unique_user", columnNames = "user_id"))
 public class ProfileImage {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String imgName;
     @Column(nullable = false)
     private String imgType;
     @Column(nullable = false)
+    @Lob
     private byte[] imgData;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
 }
