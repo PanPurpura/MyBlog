@@ -1,7 +1,9 @@
 package com.myblog.blog.service;
 
 import com.myblog.blog.dto.ProfileImageDto;
+import com.myblog.blog.exception.InvalidSizeException;
 import com.myblog.blog.exception.NotFoundException;
+import com.myblog.blog.exception.WrongImageTypeException;
 import com.myblog.blog.mapper.ProfileImageMapper;
 import com.myblog.blog.model.ProfileImage;
 import com.myblog.blog.model.User;
@@ -9,13 +11,16 @@ import com.myblog.blog.repository.ProfileImageRepository;
 import com.myblog.blog.util.ImageUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +32,13 @@ public class ProfileImageService {
     private final ProfileImageMapper profileImageMapper;
 
     public String uploadImage(MultipartFile img, Principal connectedUser) throws IOException {
+
+        if(!img.getContentType().equals(MediaType.IMAGE_PNG_VALUE) &&
+                !img.getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
+            throw new WrongImageTypeException("Only PNG and JPEG format is accepted");
+
+        if(img.getBytes().length > 10 * 1024 * 1000)
+            throw new InvalidSizeException("Image too big! Maximum size: 10MB");
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
@@ -78,4 +90,32 @@ public class ProfileImageService {
         profileImageRepository.deleteByUserId(id);
 
     }
+
+    public ProfileImageDto updateImage(MultipartFile img, Principal connectedUser) throws IOException {
+
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        ProfileImage profileImage = profileImageRepository.findByUserId(user.getId());
+
+        System.out.println("========================================: " + img.getName());
+
+        if(!img.getContentType().equals(MediaType.IMAGE_PNG_VALUE) &&
+                !img.getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
+            throw new WrongImageTypeException("Only PNG and JPEG format is accepted");
+
+        if(img.getBytes().length > 10 * 1024 * 1000)
+            throw new InvalidSizeException("Image too big! Maximum size: 10MB");
+
+
+        profileImage.setImgData(ImageUtils.compressImage(img.getBytes()));
+        profileImage.setImgType(img.getContentType());
+        profileImage.setImgName(img.getName());
+
+        profileImageRepository.save(profileImage);
+
+        return profileImageMapper.profileImageToProfileImageDto(profileImage);
+    }
+
+
+
 }
