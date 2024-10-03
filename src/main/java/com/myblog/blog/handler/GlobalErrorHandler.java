@@ -1,9 +1,7 @@
 package com.myblog.blog.handler;
 
 import com.myblog.blog.dto.ErrorDto;
-import com.myblog.blog.exception.InvalidPasswordException;
-import com.myblog.blog.exception.NotFoundException;
-import com.myblog.blog.exception.UserExistException;
+import com.myblog.blog.exception.*;
 import com.myblog.blog.model.User;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +37,18 @@ public class GlobalErrorHandler {
     @ResponseBody
     public ResponseEntity<ErrorDto> handleInvalidPasswordException(InvalidPasswordException e) {
         return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), e.getMessage()));
+    }
+
+    @ExceptionHandler(WrongImageTypeException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleWrongImageTypeException(WrongImageTypeException e) {
+        return ResponseEntity.status(FORBIDDEN).body(new ErrorDto(FORBIDDEN.value(), FORBIDDEN.getReasonPhrase(), e.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidSizeException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleInvalidSizeException(InvalidSizeException e) {
+        return ResponseEntity.status(FORBIDDEN).body(new ErrorDto(FORBIDDEN.value(), FORBIDDEN.getReasonPhrase(), e.getMessage()));
     }
 
 }
