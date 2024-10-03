@@ -53,4 +53,12 @@ public class ProfileImageController {
         return ResponseEntity.status(HttpStatus.OK).body("Deleted successfully");
     }
 
+    @Transactional
+    @PatchMapping("/update-image")
+    public ResponseEntity<ProfileImageDto> updateImage(@RequestParam("img") MultipartFile img, Principal connectedUser) throws IOException {
+        ProfileImageDto profileImageDto = profileImageService.updateImage(img, connectedUser);
+        return ResponseEntity.status(HttpStatus.OK).body(profileImageDto);
+    }
+
+
 }
