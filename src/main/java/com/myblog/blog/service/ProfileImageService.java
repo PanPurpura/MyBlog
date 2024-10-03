@@ -97,8 +97,6 @@ public class ProfileImageService {
 
         ProfileImage profileImage = profileImageRepository.findByUserId(user.getId());
 
-        System.out.println("========================================: " + img.getName());
-
         if(!img.getContentType().equals(MediaType.IMAGE_PNG_VALUE) &&
                 !img.getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
             throw new WrongImageTypeException("Only PNG and JPEG format is accepted");
@@ -109,7 +107,7 @@ public class ProfileImageService {
 
         profileImage.setImgData(ImageUtils.compressImage(img.getBytes()));
         profileImage.setImgType(img.getContentType());
-        profileImage.setImgName(img.getName());
+        profileImage.setImgName(img.getOriginalFilename());
 
         profileImageRepository.save(profileImage);
 
