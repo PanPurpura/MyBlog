@@ -5,6 +5,7 @@ import com.myblog.blog.exception.*;
 import com.myblog.blog.model.User;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -50,5 +51,12 @@ public class GlobalErrorHandler {
     public ResponseEntity<ErrorDto> handleInvalidSizeException(InvalidSizeException e) {
         return ResponseEntity.status(FORBIDDEN).body(new ErrorDto(FORBIDDEN.value(), FORBIDDEN.getReasonPhrase(), e.getMessage()));
     }
+
+    @ExceptionHandler(InvalidRoleException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleInvalidRoleException(InvalidRoleException e) {
+        return ResponseEntity.status(FORBIDDEN).body(new ErrorDto(FORBIDDEN.value(), FORBIDDEN.getReasonPhrase(), e.getMessage()));
+    }
+
 
 }
