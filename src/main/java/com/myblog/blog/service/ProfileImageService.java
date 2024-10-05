@@ -1,6 +1,7 @@
 package com.myblog.blog.service;
 
 import com.myblog.blog.dto.ProfileImageDto;
+import com.myblog.blog.exception.InvalidRoleException;
 import com.myblog.blog.exception.InvalidSizeException;
 import com.myblog.blog.exception.NotFoundException;
 import com.myblog.blog.exception.WrongImageTypeException;
@@ -31,7 +32,7 @@ public class ProfileImageService {
     private final UserService userService;
     private final ProfileImageMapper profileImageMapper;
 
-    public String uploadImage(MultipartFile img, Principal connectedUser) throws IOException {
+    public String uploadImage(MultipartFile img, Principal connectedUser) throws IOException, InvalidRoleException {
 
         if(!img.getContentType().equals(MediaType.IMAGE_PNG_VALUE) &&
                 !img.getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
