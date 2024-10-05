@@ -46,7 +46,7 @@ public class AuthService {
                 "name", user.getName(),
                 "surname", user.getSurname(),
                 "telephone", user.getTelephone(),
-                "role", user.getRole()
+                "roles", user.getRole()
         );
 
         var jwtToken = jwtService.generateToken(claims, user);
@@ -71,7 +71,7 @@ public class AuthService {
                     .surname(request.getSurname())
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
-                    .role(Role.ADMIN)
+                    .role(request.getRole())
                     .telephone(request.getTelephone())
                     .login(request.getLogin())
                     .build();
@@ -83,7 +83,7 @@ public class AuthService {
                     "name", user.getName(),
                     "surname", user.getSurname(),
                     "telephone", user.getTelephone(),
-                    "role", user.getRole()
+                    "roles", user.getRole()
             );
 
             var jwtToken = jwtService.generateToken(claims, user);
