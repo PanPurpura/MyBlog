@@ -32,7 +32,6 @@ public class ProfileImageController {
         return ResponseEntity.ok().body(profileImageService.uploadImage(img, connectedUser));
     }
 
-    @Transactional
     @GetMapping("/download-image/{id}")
     public ResponseEntity<?> downloadImage(@PathVariable Integer id) {
         ProfileImageDto img = profileImageService.downloadImage(id);
@@ -41,7 +40,6 @@ public class ProfileImageController {
                 .contentType(MediaType.valueOf(img.getImageType())).body(img.getImageData());
     }
 
-    @Transactional
     @GetMapping("/download-all")
     public ResponseEntity<?> downloadAll() {
         List<ProfileImageDto> profileImageList = profileImageService.downloadAll();
