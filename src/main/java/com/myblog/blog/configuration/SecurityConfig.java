@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -23,13 +24,22 @@ import static com.myblog.blog.model.Role.*;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-    private final HandlerExceptionResolver handlerExceptionResolver;
+    private final HandlerExceptionResolver exceptionResolver;
+
+    public SecurityConfig(
+            @Qualifier("handlerExceptionResolver") HandlerExceptionResolver exceptionResolver_,
+            JwtAuthenticationFilter jwtAuthFilter_,
+            AuthenticationProvider authenticationProvider_
+    ) {
+        this.exceptionResolver = exceptionResolver_;
+        this.jwtAuthFilter = jwtAuthFilter_;
+        this.authenticationProvider = authenticationProvider_;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -57,8 +67,8 @@ public class SecurityConfig {
                             .authenticated();
                 })
                 .exceptionHandling(ex -> {
-                    ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint(handlerExceptionResolver));
-                    ex.accessDeniedHandler(new CustomAccessDeniedHandler(handlerExceptionResolver));
+                    ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint(exceptionResolver));
+                    ex.accessDeniedHandler(new CustomAccessDeniedHandler(exceptionResolver));
                 })
                 .sessionManagement(request -> {
                     request.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
