@@ -5,6 +5,8 @@ import com.myblog.blog.exception.*;
 import com.myblog.blog.model.User;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,8 +32,8 @@ public class GlobalErrorHandler {
 
     @ExceptionHandler(JwtException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDto> handleJwtException(JwtException e) {
-        return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), e.getMessage()));
+    public ResponseEntity<ErrorDto> handleJwtException() {
+        return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), "Invalid jwt token"));
     }
 
     @ExceptionHandler(InvalidPasswordException.class)
@@ -58,5 +60,22 @@ public class GlobalErrorHandler {
         return ResponseEntity.status(FORBIDDEN).body(new ErrorDto(FORBIDDEN.value(), FORBIDDEN.getReasonPhrase(), e.getMessage()));
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleAccessDeniedException(AccessDeniedException e) {
+        return ResponseEntity.status(FORBIDDEN).body(new ErrorDto(FORBIDDEN.value(), FORBIDDEN.getReasonPhrase(), e.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleAccessDeniedException(AuthenticationException e) {
+        return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), e.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleOtherErrors(Exception e) {
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ErrorDto(INTERNAL_SERVER_ERROR.value(), INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage()));
+    }
 
 }
