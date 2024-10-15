@@ -39,9 +39,10 @@ public class AuthService {
                 )
         );
 
-        var user = repository.findByEmail(dto.getEmail()).orElse(null);
+        var user = repository.findByEmail(dto.getEmail()).orElseThrow(() -> new NotFoundException("User doesn't exist"));
 
         Map<String, Object> claims = Map.of(
+                "id", user.getId(),
                 "login", user.getLogin(),
                 "name", user.getName(),
                 "surname", user.getSurname(),
@@ -79,6 +80,7 @@ public class AuthService {
             repository.save(user);
 
             Map<String, Object> claims = Map.of(
+                    "id", user.getId(),
                     "login", user.getLogin(),
                     "name", user.getName(),
                     "surname", user.getSurname(),
