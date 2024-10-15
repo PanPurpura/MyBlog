@@ -1,19 +1,19 @@
 package com.myblog.blog.service;
 
 import com.myblog.blog.dto.*;
-import com.myblog.blog.exception.InvalidPasswordException;
+import com.myblog.blog.exception.InvalidCredentialsException;
+import com.myblog.blog.exception.NotFoundException;
 import com.myblog.blog.mapper.CredentialsMapper;
 import com.myblog.blog.mapper.UserMapper;
 import com.myblog.blog.model.User;
 import com.myblog.blog.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+
+import static com.myblog.blog.constant.ApplicationConstant.NO_USER_FOUND;
 
 @Service
 @AllArgsConstructor
@@ -29,11 +29,15 @@ public class UserService {
         return (List<User>) repository.findAll();
     }
 
-    public User updateUserInfo(UserDto dto, Principal connectedUser) {
-        var myUser = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        userMapper.updateUserFromDto(dto, myUser);
-        repository.save(myUser);
-        return myUser;
+    public User updateUserInfo(UserDto dto, Integer userId) {
+
+        if(userId == null)
+            throw new NotFoundException("Wrong userId");
+
+        User myUser = repository.findById(userId).orElseThrow(() -> new NotFoundException(NO_USER_FOUND));
+        User u = userMapper.updateUserFromDto(dto, myUser);
+        repository.save(u);
+        return u;
     }
 
     public String delete(CredentialsDto dto) {
@@ -42,46 +46,58 @@ public class UserService {
         return "Deleted successfully";
     }
 
+    //Only for testing purposes
     public void deleteAll() {
         repository.deleteAll();
     }
 
+    //To delete
     public String updateCredentials(CredentialsDto dto) {
-        User myUser = repository.findByEmail(dto.getEmail()).get();
+        User myUser = repository.findByEmail(dto.getEmail()).orElseThrow(() -> new NotFoundException(NO_USER_FOUND));
         credentialsMapper.updateUserFromCredentialsDto(dto, myUser);
         repository.save(myUser);
         return "Credentials Updated";
     }
 
-    public void changePassword(ChangePasswordDto request, Principal connectedUser) {
+    public void changePassword(ChangePasswordDto request, Integer userId) {
 
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        var user = repository.findById(userId).orElseThrow(() -> new NotFoundException(NO_USER_FOUND));
 
         if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
-            throw new InvalidPasswordException("Wrong password!");
+            throw new InvalidCredentialsException("Wrong password!");
+        }
+
+        if(passwordEncoder.matches(request.getNewPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("New password and the old one are the same!");
         }
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-            throw new InvalidPasswordException("Passwords are not the same!");
+            throw new InvalidCredentialsException("Passwords are not the same!");
         }
 
-        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        String newPassword = passwordEncoder.encode(request.getNewPassword());
+        user.setPassword(newPassword);
         repository.save(user);
 
     }
 
-    public AuthenticationResponseDto changeEmail(ChangeEmailDto request, Principal connectedUser) {
+    public AuthenticationResponseDto changeEmail(ChangeEmailDto request, Integer userId) {
 
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        var user = repository.findById(userId).orElseThrow(() -> new NotFoundException(NO_USER_FOUND));
 
         if (!passwordEncoder.matches(request.getConfirmPassword(), user.getPassword())) {
-            throw new InvalidPasswordException("Wrong password!");
+            throw new InvalidCredentialsException("Wrong password!");
+        }
+
+        if(passwordEncoder.matches(request.getNewEmail(), user.getEmail())) {
+            throw new InvalidCredentialsException("New email and the old one are the same!");
         }
 
         user.setEmail(request.getNewEmail());
         repository.save(user);
 
         Map<String, Object> claims = Map.of(
+                "id", user.getId(),
                 "login", user.getLogin(),
                 "name", user.getName(),
                 "surname", user.getSurname(),
