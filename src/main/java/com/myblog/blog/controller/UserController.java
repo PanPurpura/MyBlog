@@ -30,9 +30,9 @@ public class UserController {
 
     record Credentials(String email, String password) {};
 
-    @PutMapping("/update-user-info")
-    public User updateUserInfo(@RequestBody UserDto request, Principal connectedUser) {
-        return userservice.updateUserInfo(request, connectedUser);
+    @PutMapping("/update-user-info/{userId}")
+    public User updateUserInfo(@RequestBody UserDto request, @PathVariable Integer userId) {
+        return userservice.updateUserInfo(request, userId);
     }
 
     @DeleteMapping("/deleteAll")
@@ -50,15 +50,15 @@ public class UserController {
         return userservice.updateCredentials(cred);
     }
 
-    @PatchMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto request, Principal connectedUser) {
-        userservice.changePassword(request, connectedUser);
+    @PatchMapping("/change-password/{userId}")
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordDto request, @PathVariable Integer userId) {
+        userservice.changePassword(request, userId);
         return ResponseEntity.accepted().build();
     }
 
-    @PatchMapping("/change-email")
-    public ResponseEntity<?> changeEmail(@RequestBody ChangeEmailDto request, Principal connectedUser) {
-        return ResponseEntity.accepted().body(userservice.changeEmail(request, connectedUser));
+    @PatchMapping("/change-email/{userId}")
+    public ResponseEntity<?> changeEmail(@RequestBody ChangeEmailDto request, @PathVariable Integer userId) {
+        return ResponseEntity.accepted().body(userservice.changeEmail(request, userId));
     }
 
 }
