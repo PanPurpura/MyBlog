@@ -2,16 +2,14 @@ package com.myblog.blog.handler;
 
 import com.myblog.blog.dto.ErrorDto;
 import com.myblog.blog.exception.*;
-import com.myblog.blog.model.User;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -32,13 +30,13 @@ public class GlobalErrorHandler {
 
     @ExceptionHandler(JwtException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDto> handleJwtException() {
-        return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), "Invalid jwt token"));
+    public ResponseEntity<ErrorDto> handleJwtException(JwtException e) {
+        return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), e.getMessage()));
     }
 
-    @ExceptionHandler(InvalidPasswordException.class)
+    @ExceptionHandler(InvalidCredentialsException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDto> handleInvalidPasswordException(InvalidPasswordException e) {
+    public ResponseEntity<ErrorDto> handleInvalidPasswordException(InvalidCredentialsException e) {
         return ResponseEntity.status(UNAUTHORIZED).body(new ErrorDto(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), e.getMessage()));
     }
 
@@ -76,6 +74,12 @@ public class GlobalErrorHandler {
     @ResponseBody
     public ResponseEntity<ErrorDto> handleOtherErrors(Exception e) {
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ErrorDto(INTERNAL_SERVER_ERROR.value(), INTERNAL_SERVER_ERROR.getReasonPhrase(), e.getMessage()));
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    @ResponseBody
+    public ResponseEntity<ErrorDto> handleNoResourceFound(NoResourceFoundException e) {
+        return ResponseEntity.status(NOT_FOUND).body(new ErrorDto(NOT_FOUND.value(), NOT_FOUND.getReasonPhrase(), e.getMessage()));
     }
 
 }
