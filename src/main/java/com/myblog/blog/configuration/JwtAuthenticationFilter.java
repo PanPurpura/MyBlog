@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String userEmail;
         if (authenticationHeader == null || !authenticationHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            exceptionResolver.resolveException(request, response, null, new JwtException("Invalid jwt"));
+            exceptionResolver.resolveException(request, response, null, new JwtException("Invalid jwt token"));
             return;
         }
         try {
@@ -75,5 +75,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getServletPath().contains("/auth");
     }
 }
